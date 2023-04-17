@@ -2,17 +2,15 @@ package yandex.scooter.tests;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import lombok.Data;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import yandex.ScooterApiClient;
+import yandex.order.CreateOrder;
 
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
-@Data
-public class CreateOrderTests extends ScooterApiClient {
+public class CreateOrderTests {
 
     private final String firstName;
     private final String lastName;
@@ -38,7 +36,6 @@ public class CreateOrderTests extends ScooterApiClient {
 
     @Parameterized.Parameters(name = "Test data: {8}")
     public static Object[][] getTestData() {
-
         return new Object[][]{
                 {"Naruto", "Uzumaki", "Kanoha, 142 apt.", "1", "+7 800 355 35 35", 5, "2023-04-10", "AFAP!", new String[]{"BLACK"}},
                 {"Naruto", "Uzumaki", "Kanoha, 142 apt.", "1", "+7 800 355 35 35", 5, "2023-04-10", "AFAP!", new String[]{"GREY"}},
@@ -53,17 +50,11 @@ public class CreateOrderTests extends ScooterApiClient {
     @Description("Создание заказов с различными цветами самоката-позитивное")
     public void testCreateOrderWithVariousColorScooter() {
 
-        CreateOrderTests createOrderTests = new CreateOrderTests(firstName, lastName, address, metroStation, phone, rentTime, deliveryDate, comment, color);
+        CreateOrder createOrder = new CreateOrder(firstName, lastName, address, metroStation, phone, rentTime, deliveryDate, comment, color);
 
-        int OrderTrack = getSpec()
-                .body(createOrderTests)
-                .when()
-                .post("/api/v1/orders")
-                .then().log().all()
-                .assertThat()
-                .statusCode(201)
-                .extract().path("track");
+        int orderTrack = createOrder.createOrder();
 
-        assertNotNull(OrderTrack); //Проверяем, что созданный заказ имеет уникальный номер (track) и не равен null.
+        assertNotNull(orderTrack); //Проверяем, что созданный заказ имеет уникальный номер (track) и не равен null.
     }
+
 }
